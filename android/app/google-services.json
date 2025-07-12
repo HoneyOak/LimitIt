@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "6402252609",
+    "project_id": "limitit-87b07",
+    "storage_bucket": "limitit-87b07.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:6402252609:android:7cabeb8b9cdca8c6b18bc0",
+        "android_client_info": {
+          "package_name": "com.example.limit_it"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzA9A0jhpHyOebg5T5zjrZbEIhgKIg460"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
