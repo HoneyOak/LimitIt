@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:limit_it/home_page.dart';
+import 'package:limit_it/login.dart';
+import 'package:limit_it/main_page.dart';
 import 'firebase_options.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,14 +24,15 @@ class LimitIt extends StatelessWidget {
     return MaterialApp(
       title: 'LimitIt',
       theme: ThemeData(
+        fontFamily: 'TikTokSans',
         brightness: Brightness.dark,
         colorScheme: ColorScheme.dark(
-          primary: Color(0xffF1F7ED),
-          secondary: Color(0xffA3C9A8),
-          surface: Color(0xff1A1A1A),
-          onPrimary: Colors.black,
+          primary: Color(0xff272727),
+          secondary: Color(0xff7F7B82),
+          surface: Color(0xff333333),
+          onPrimary: Color(0xff00A7E1),
           onSecondary: Colors.black,
-          onSurface: Colors.white,
+          onSurface: Color(0xffF1F7ED),
         ),
         primaryColor: Color(0xffF1F7ED),
         scaffoldBackgroundColor: Color(0xff272727),
@@ -39,35 +42,11 @@ class LimitIt extends StatelessWidget {
         ),
 
        ),
-      home: const MyWidget(),
+      home: MainPage(),
     );
   }
 }
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
 
-  @override
-  State<MyWidget> createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
-  @override
-  Widget build(BuildContext context) {
-   return Scaffold(
-    body: Center(
-      child: Container(
-        margin: const EdgeInsets.all(100),
-        padding: const EdgeInsets.all(10),
-        color: Color(0xff00A7E1),
-        height: 100,
-        width: 100,
-        child: const Text('Hi Mom 🐣'),
-        
-      ),
-    ),
-   );
-  }
-}
  
   
