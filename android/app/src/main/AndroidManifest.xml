@@ -1,8 +1,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
+
     <application
         android:label="limit_it"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <service 
+        android:name="com.pravera.flutter_foreground_task.service.ForegroundService"
+        android:foregroundServiceType="dataSync|remoteMessaging"
+        android:exported="false" />
+
+    <receiver
+        android:enabled="true"
+        android:exported="true"
+        android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+        android:name="com.pravera.flutter_foreground_task.receiver.RestartReceiver">
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            <action android:name="android.intent.action.REBOOT"/>
+            <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+        </intent-filter>
+    </receiver>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
