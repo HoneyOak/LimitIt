@@ -8,6 +8,7 @@ class FriendRequestsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser!.uid;
+
     final incomingRequestsRef = FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
@@ -22,12 +23,14 @@ class FriendRequestsPage extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: incomingRequestsRef.snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
           final requests = snapshot.data!.docs;
 
           if (requests.isEmpty) {
-            return const Center(child: Text("No incoming requests."));
+            return const Center(child: Text("No incoming friend requests."));
           }
 
           return ListView.builder(
@@ -36,13 +39,20 @@ class FriendRequestsPage extends StatelessWidget {
               final requesterId = requests[index].id;
 
               return FutureBuilder<DocumentSnapshot>(
-                future: FirebaseFirestore.instance.collection('users').doc(requesterId).get(),
+                future: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(requesterId)
+                    .get(),
                 builder: (context, userSnapshot) {
-                  if (!userSnapshot.hasData) return const SizedBox();
+                  if (!userSnapshot.hasData) {
+                    return const ListTile(
+                      title: Text("Loading..."),
+                    );
+                  }
 
                   final requester = userSnapshot.data!;
-                  final username = requester['username'];
-                  final email = requester['email'];
+                  final username = requester['username'] ?? 'Unknown';
+                  final email = requester['email'] ?? '';
 
                   return ListTile(
                     title: Text(username),
@@ -52,33 +62,26 @@ class FriendRequestsPage extends StatelessWidget {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.check, color: Colors.green),
+                          tooltip: 'Accept',
                           onPressed: () async {
-                            // Accept friend request
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(uid)
-                                .collection('friends')
-                                .doc(requesterId)
-                                .set({'timestamp': FieldValue.serverTimestamp()});
+                            final userRef = FirebaseFirestore.instance.collection('users');
 
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(requesterId)
-                                .collection('friends')
-                                .doc(uid)
-                                .set({'timestamp': FieldValue.serverTimestamp()});
+                            // Add each other as friends
+                            await userRef.doc(uid).collection('friends').doc(requesterId).set({
+                              'timestamp': FieldValue.serverTimestamp(),
+                            });
 
-                            // Remove the friend request
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(uid)
+                            await userRef.doc(requesterId).collection('friends').doc(uid).set({
+                              'timestamp': FieldValue.serverTimestamp(),
+                            });
+
+                            // Remove the request
+                            await userRef.doc(uid)
                                 .collection('friend_requests_incoming')
                                 .doc(requesterId)
                                 .delete();
 
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(requesterId)
+                            await userRef.doc(requesterId)
                                 .collection('friend_requests_outgoing')
                                 .doc(uid)
                                 .delete();
@@ -86,18 +89,16 @@ class FriendRequestsPage extends StatelessWidget {
                         ),
                         IconButton(
                           icon: const Icon(Icons.close, color: Colors.red),
+                          tooltip: 'Reject',
                           onPressed: () async {
-                            // Reject friend request
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(uid)
+                            final userRef = FirebaseFirestore.instance.collection('users');
+
+                            await userRef.doc(uid)
                                 .collection('friend_requests_incoming')
                                 .doc(requesterId)
                                 .delete();
 
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(requesterId)
+                            await userRef.doc(requesterId)
                                 .collection('friend_requests_outgoing')
                                 .doc(uid)
                                 .delete();

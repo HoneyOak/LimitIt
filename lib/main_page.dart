@@ -5,6 +5,8 @@ import 'package:limit_it/auth_page.dart';
 import 'package:limit_it/background_task_handler.dart';
 import 'package:limit_it/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:android_intent_plus/android_intent.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -21,8 +23,8 @@ class _MainPageState extends State<MainPage> {
     saveUid();
     FlutterForegroundTask.addTaskDataCallback(_onReceiveTaskData);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _requestPermissions();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _requestPermissions();
       _initService();
     });
   }
@@ -33,20 +35,23 @@ class _MainPageState extends State<MainPage> {
       await prefs.setString('uid', uid);
     }
 }
-
-  Future<void> _requestPermissions() async {
-    final permission =
-        await FlutterForegroundTask.checkNotificationPermission();
-    if (permission != NotificationPermission.granted) {
-      await FlutterForegroundTask.requestNotificationPermission();
-    }
-
-    if (Theme.of(context).platform == TargetPlatform.android) {
-      if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
-        await FlutterForegroundTask.requestIgnoreBatteryOptimization();
-      }
-    }
+Future<void> _requestPermissions() async {
+  // Request notification permission
+  final permission = await FlutterForegroundTask.checkNotificationPermission();
+  if (permission != NotificationPermission.granted) {
+    await FlutterForegroundTask.requestNotificationPermission();
   }
+
+  // Check and request battery optimization exclusion
+  final androidInfo = await DeviceInfoPlugin().androidInfo;
+  if (androidInfo.version.sdkInt >= 23) {
+    const intent = AndroidIntent(
+      action: 'android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS',
+      data: 'package:com.example.limitit',
+    );
+    await intent.launch();
+  }
+}
 
   void _initService() {
     FlutterForegroundTask.init(
@@ -60,7 +65,7 @@ class _MainPageState extends State<MainPage> {
         playSound: false,
       ),
       foregroundTaskOptions: ForegroundTaskOptions(
-        eventAction: ForegroundTaskEventAction.repeat(60000),
+        eventAction: ForegroundTaskEventAction.repeat(30000),
         autoRunOnBoot: true,
       ),
     );

@@ -24,24 +24,27 @@ class FriendSearchDelegate extends SearchDelegate {
       future: FirebaseFirestore.instance
           .collection('users')
           .where('username', isGreaterThanOrEqualTo: query)
-          .where('username', isLessThan: query + 'z')
+          .where('username', isLessThan: '${query}z')
           .get(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData)
+        if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
+        }
 
         final results = snapshot.data!.docs
             .where((doc) => doc.id != myUid)
             .toList();
 
-        if (results.isEmpty)
+        if (results.isEmpty) {
           return const Center(child: Text("No users found."));
+        }
 
         return FutureBuilder<Map<String, dynamic>>(
           future: _getFriendshipData(myUid),
           builder: (context, friendshipSnapshot) {
-            if (!friendshipSnapshot.hasData)
+            if (!friendshipSnapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
+            }
 
             final friendData = friendshipSnapshot.data!;
 

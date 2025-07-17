@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:limit_it/auth_page.dart';
 import 'package:limit_it/main_page.dart';
 import 'firebase_options.dart';
 
