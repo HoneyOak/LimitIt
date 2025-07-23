@@ -1,0 +1,15 @@
+Limit It is a collaborative app that helps you curb phone addiction with the support of your friends. By tracking your screen time and displaying it to your trusted circle, Limit It makes phone use more intentional and accountable.
+
+Whether you're trying to focus on studies, work, or just want to cut down on mindless scrolling, your friends can support you by keeping an eye on your usage and even sending “boos” when motivation is needed.
+
+KEY FEATURES:
+- Track your daily screen time automatically.
+- See which friends are currently active and how long they’ve been using their phone.
+- Add friends and accept or reject friend requests.
+- Stay accountable through encouragement (or playful boos).
+- Shows online/offline status and last seen timestamp.
+- Runs reliably in the background using a persistent foreground service.
+
+Limit It is open source and privacy-conscious. It uses a persistent tracking service that continues to work even when the app is in the background, ensuring accurate reporting and real-time updates.
+
+Licensed under the MIT License.
